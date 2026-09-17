@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   Server,
   Building2,
+  Menu,
   X
 } from 'lucide-react';
 import { api } from '../services/api';
@@ -22,6 +23,7 @@ export default function MainLayout({
 }) {
   const [health, setHealth] = useState(null);
   const [dismissSafetyBanner, setDismissSafetyBanner] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     api.getHealth()
@@ -33,17 +35,32 @@ export default function MainLayout({
 
   return (
     <div className="app-container">
+      {/* Mobile Backdrop Overlay */}
+      <div
+        className={`mobile-sidebar-backdrop ${mobileMenuOpen ? 'open' : ''}`}
+        onClick={() => setMobileMenuOpen(false)}
+      />
+
       {/* Sidebar Navigation */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
         {/* Brand Header */}
         <div className="sidebar-header">
           <div className="brand-logo-icon">
             <Bot size={22} />
           </div>
-          <div>
+          <div style={{ flex: 1 }}>
             <div className="brand-title">AlexDesk AI</div>
             <div className="brand-subtitle">HVAC Lead Dispatch</div>
           </div>
+          {/* Mobile Close Button */}
+          <button
+            type="button"
+            className="mobile-close-btn"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close menu"
+          >
+            <X size={20} />
+          </button>
         </div>
 
         {/* Navigation Items */}
@@ -51,7 +68,7 @@ export default function MainLayout({
           <button
             type="button"
             className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
-            onClick={() => onSelectTab('dashboard')}
+            onClick={() => { onSelectTab('dashboard'); setMobileMenuOpen(false); }}
           >
             <div className="nav-label-group">
               <LayoutDashboard size={18} />
@@ -65,7 +82,7 @@ export default function MainLayout({
           <button
             type="button"
             className={`nav-item ${activeTab === 'simulator' ? 'active' : ''}`}
-            onClick={() => onSelectTab('simulator')}
+            onClick={() => { onSelectTab('simulator'); setMobileMenuOpen(false); }}
           >
             <div className="nav-label-group">
               <Bot size={18} />
@@ -88,7 +105,7 @@ export default function MainLayout({
           <button
             type="button"
             className={`nav-item ${activeTab === 'escalations' ? 'active' : ''}`}
-            onClick={() => onSelectTab('escalations')}
+            onClick={() => { onSelectTab('escalations'); setMobileMenuOpen(false); }}
           >
             <div className="nav-label-group">
               <AlertTriangle size={18} />
@@ -102,7 +119,7 @@ export default function MainLayout({
           <button
             type="button"
             className={`nav-item ${activeTab === 'voice' ? 'active' : ''}`}
-            onClick={() => onSelectTab('voice')}
+            onClick={() => { onSelectTab('voice'); setMobileMenuOpen(false); }}
           >
             <div className="nav-label-group">
               <Radio size={18} />
@@ -134,19 +151,28 @@ export default function MainLayout({
         {/* Top Header */}
         <header className="top-header">
           <div className="header-left">
-            <h1 style={{ fontSize: '1.1rem', color: '#fff' }}>
+            <button
+              type="button"
+              className="mobile-hamburger-btn"
+              onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open navigation menu"
+            >
+              <Menu size={22} />
+            </button>
+            <h1 className="header-page-title">
               {activeTab === 'dashboard' && 'Lead Management & Dispatch Center'}
               {activeTab === 'simulator' && 'AI Receptionist Live Simulator'}
-              {activeTab === 'escalations' && 'Human Escalation & Safety Incident Queue'}
-              {activeTab === 'voice' && 'Telephony & Twilio Voice Integration Hub'}
+              {activeTab === 'escalations' && 'Human Escalation & Safety Queue'}
+              {activeTab === 'voice' && 'Telephony & Twilio Hub'}
             </h1>
-            <div className="header-title-badge">
+            <div className="header-title-badge hide-mobile">
               <span>Apex Comfort Heating & Air</span>
             </div>
           </div>
 
           <div className="header-right">
             <div
+              className="header-pill-alert hide-mobile"
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -160,25 +186,29 @@ export default function MainLayout({
               }}
             >
               <ShieldAlert size={14} color="#ef4444" />
-              <span>Emergency Gas Utility: (866) 322-8667</span>
+              <span>Gas Utility: (866) 322-8667</span>
             </div>
 
-            <div
+            <a
+              href="tel:5553492665"
+              className="header-pill-phone"
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
                 background: 'var(--bg-card)',
                 border: '1px solid var(--border-subtle)',
-                padding: '4px 10px',
+                padding: '5px 10px',
                 borderRadius: '6px',
                 fontSize: '0.76rem',
-                color: 'var(--brand-cyan)'
+                color: 'var(--brand-cyan)',
+                textDecoration: 'none'
               }}
+              title="Call Office"
             >
               <Phone size={13} />
-              <span>Office: (555) 349-2665</span>
-            </div>
+              <span className="hide-mobile">Office: (555) 349-2665</span>
+            </a>
           </div>
         </header>
 
